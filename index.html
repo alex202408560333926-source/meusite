@@ -187,7 +187,7 @@
 <!-- ==================== MENU SUPERIOR ==================== -->
 <nav class="navbar navbar-expand-lg bg-white shadow-sm sticky-top py-2">
     <div class="container">
-        <a class="navbar-brand" href="#" onclick="showSection('home'); return false;">
+        <a class="navbar-brand" href="#" onclick="changePage('home'); return false;">
             <i class="bi bi-car-front-fill"></i> Oliveira Tapeçaria
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain" aria-controls="navbarMain" aria-expanded="false" aria-label="Toggle navigation">
@@ -196,13 +196,13 @@
         <div class="collapse navbar-collapse" id="navbarMain">
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0 gap-2">
                 <li class="nav-item">
-                    <a class="nav-link" href="#" onclick="showSection('home'); return false;">Home</a>
+                    <a class="nav-link" href="#" onclick="changePage('home'); return false;">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#" onclick="showSection('politica'); return false;">Política de Privacidade</a>
+                    <a class="nav-link" href="#" onclick="changePage('politica'); return false;">Política de Privacidade</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#" onclick="showSection('termos'); return false;">Termos de Uso</a>
+                    <a class="nav-link" href="#" onclick="changePage('termos'); return false;">Termos de Uso</a>
                 </li>
             </ul>
         </div>
@@ -211,7 +211,7 @@
 
 <main>
     <!-- ==================== SEÇÃO HOME ==================== -->
-    <section id="home-section" class="content-section active-section">
+    <section id="home-section" class="content-section">
         <!-- Hero -->
         <div class="hero-section">
             <div class="container">
@@ -434,9 +434,9 @@
             <div class="col-md-3">
                 <h5 class="text-white mb-3">Institucional</h5>
                 <ul class="list-unstyled small">
-                    <li class="mb-2"><a href="#" onclick="showSection('home'); return false;" class="text-white-50 text-decoration-none">Home</a></li>
-                    <li class="mb-2"><a href="#" onclick="showSection('politica'); return false;" class="text-white-50 text-decoration-none">Política de Privacidade</a></li>
-                    <li class="mb-2"><a href="#" onclick="showSection('termos'); return false;" class="text-white-50 text-decoration-none">Termos de Uso</a></li>
+                    <li class="mb-2"><a href="#" onclick="changePage('home'); return false;" class="text-white-50 text-decoration-none">Home</a></li>
+                    <li class="mb-2"><a href="#" onclick="changePage('politica'); return false;" class="text-white-50 text-decoration-none">Política de Privacidade</a></li>
+                    <li class="mb-2"><a href="#" onclick="changePage('termos'); return false;" class="text-white-50 text-decoration-none">Termos de Uso</a></li>
                 </ul>
             </div>
         </div>
@@ -456,6 +456,16 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
+    // Função para mudar de página e atualizar a URL com parâmetro
+    function changePage(pageName) {
+        // Atualizar a URL com o parâmetro ?page=
+        const newUrl = window.location.pathname + '?page=' + pageName;
+        window.history.pushState({ page: pageName }, '', newUrl);
+        
+        // Mostrar a seção correspondente
+        showSection(pageName);
+    }
+    
     // Função para alternar entre as seções
     function showSection(sectionName) {
         // Esconder todas as seções
@@ -475,10 +485,14 @@
         // Ativar o link correto baseado na seção
         if (sectionName === 'home') {
             navLinks[0].classList.add('active');
+            // Atualizar título da página
+            document.title = 'Oliveira Tapeçaria - Home';
         } else if (sectionName === 'politica') {
             navLinks[1].classList.add('active');
+            document.title = 'Oliveira Tapeçaria - Política de Privacidade';
         } else if (sectionName === 'termos') {
             navLinks[2].classList.add('active');
+            document.title = 'Oliveira Tapeçaria - Termos de Uso';
         }
         
         // Rolar para o topo da página
@@ -488,7 +502,7 @@
     // Função para rolar até a seção de contato na Home
     function scrollToContato() {
         // Garantir que estamos na seção home
-        showSection('home');
+        changePage('home');
         
         // Pequeno delay para garantir que a seção home foi carregada
         setTimeout(() => {
@@ -499,23 +513,27 @@
         }, 100);
     }
     
-    // Verificar se há hash na URL para carregar a seção correta
-    function checkHash() {
-        const hash = window.location.hash.substring(1);
-        if (hash === 'politica') {
+    // Função para ler o parâmetro da URL e carregar a página correta
+    function loadPageFromUrl() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const page = urlParams.get('page');
+        
+        if (page === 'politica') {
             showSection('politica');
-        } else if (hash === 'termos') {
+        } else if (page === 'termos') {
             showSection('termos');
         } else {
             showSection('home');
         }
     }
     
-    // Executar ao carregar a página
-    document.addEventListener('DOMContentLoaded', checkHash);
+    // Lidar com navegação pelo botão voltar/avançar do navegador
+    window.addEventListener('popstate', function(event) {
+        loadPageFromUrl();
+    });
     
-    // Atualizar quando o hash mudar
-    window.addEventListener('hashchange', checkHash);
+    // Executar ao carregar a página
+    document.addEventListener('DOMContentLoaded', loadPageFromUrl);
 </script>
 </body>
 </html>
